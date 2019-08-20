@@ -1,0 +1,60 @@
+{
+	"name": "pomodoro",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"app-serve": "parcel index.html --out-dir ./output/app/serve/bundle --cache-dir ./output/app/serve/cache --port 1234 --no-autoinstall",
+		"app-watch": "parcel watch index.html --out-dir ./output/app/watch/bundle --cache-dir ./output/app/serve/cache --no-autoinstall",
+		"app-build": "parcel build index.html --out-dir ./output/app/build/bundle --target browser --no-source-maps --no-cache --no-minify --public-url ./",
+		"api-start": "node --experimental-modules api/index.mjs",
+		"api-watch": "nodemon --exec babel-node --experimental-modules api/index.mjs"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Potentii/Pomodoro.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Potentii/Pomodoro/issues"
+	},
+	"homepage": "https://github.com/Potentii/Pomodoro",
+	"engines": {
+		"node": "11.14.0"
+	},
+	"type": "module",
+	"dependencies": {
+		"@babel/runtime": "7.2.0",
+		"axios": "0.19.0",
+		"cors": "2.8.5",
+		"dotenv": "8.0.0",
+		"express": "4.17.1",
+		"express-async-errors": "3.1.1",
+		"joi": "14.1.1",
+		"nodemon": "1.19.1",
+		"uuid": "3.3.2",
+		"v-state": "1.1.1",
+		"vue": "2.6.10",
+		"vue-clickaway": "2.2.2",
+		"vue-router": "3.0.7",
+		"vue-shortkey": "3.1.7",
+		"vue-the-mask": "0.11.1",
+		"vuex": "3.1.1",
+		"winston": "3.2.1"
+	},
+	"devDependencies": {
+		"@babel/core": "7.2.2",
+		"@babel/node": "7.5.0",
+		"@babel/plugin-proposal-nullish-coalescing-operator": "7.4.4",
+		"@babel/plugin-proposal-object-rest-spread": "7.2.0",
+		"@babel/plugin-proposal-optional-chaining": "7.2.0",
+		"@babel/plugin-syntax-import-meta": "7.2.0",
+		"@babel/plugin-transform-regenerator": "7.0.0",
+		"@babel/plugin-transform-runtime": "7.2.0",
+		"@babel/preset-env": "7.5.2",
+		"@vue/component-compiler-utils": "2.3.1",
+		"del": "3.0.0",
+		"gulp": "4.0.0",
+		"parcel-bundler": "1.12.3",
+		"vue-hot-reload-api": "2.3.3",
+		"vue-template-compiler": "2.6.10"
+	}
+}

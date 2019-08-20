@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="toten-dev" type="CompoundRunConfigurationType">
+    <toRun name="electron-start" type="js.build_tools.npm" />
+    <toRun name="app-serve" type="js.build_tools.npm" />
+    <method v="2" />
+  </configuration>
+</component>

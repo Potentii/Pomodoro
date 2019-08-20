@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="db-migrate" type="js.build_tools.npm" nameIsGenerated="true">
+    <package-json value="$PROJECT_DIR$/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="db-migrate" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs>
+      <env name="NODE_ENV" value="development" />
+      <env name="DATABASE_HOST" value="localhost" />
+      <env name="DATABASE_NAME" value="gymifie" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
