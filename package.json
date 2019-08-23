@@ -5,9 +5,9 @@
 	"scripts": {
 		"app-serve": "parcel index.html --out-dir ./output/app/serve/bundle --cache-dir ./output/app/serve/cache --port 1234 --no-autoinstall",
 		"app-watch": "parcel watch index.html --out-dir ./output/app/watch/bundle --cache-dir ./output/app/serve/cache --no-autoinstall",
-		"app-build": "parcel build index.html --out-dir ./output/app/build/bundle --target browser --no-source-maps --no-cache --no-minify --public-url ./",
-		"api-start": "node --experimental-modules api/index.mjs",
-		"api-watch": "nodemon --exec babel-node --experimental-modules api/index.mjs"
+		"app-build": "parcel build index.html --out-dir ./output/app/build/bundle --target browser --no-source-maps --no-cache --public-url ./",
+		"api-start": "node --experimental-modules api/main.mjs",
+		"api-watch": "nodemon --exec babel-node --experimental-modules api/main.mjs"
 	},
 	"repository": {
 		"type": "git",

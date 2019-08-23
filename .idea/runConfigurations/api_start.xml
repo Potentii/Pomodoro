@@ -6,9 +6,7 @@
       <script value="api-start" />
     </scripts>
     <node-interpreter value="project" />
-    <envs>
-      <env name="NODE_ENV" value="development" />
-    </envs>
+    <envs />
     <method v="2" />
   </configuration>
 </component>
