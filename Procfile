@@ -1,1 +1,1 @@
-web: npm install&&npm run app-build&&npm run api-start
+web: npm install&&npm install -g parcel-bundler&&npm run app-build&&npm run api-start
