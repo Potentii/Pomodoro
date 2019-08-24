@@ -66,7 +66,7 @@ export default {
 			pomodoro: null,
 
 			tasks: [
-				new PomodoroTask('1', 'Tarefa 1', PomodoroTask.TYPES.POMODORO, 1000 * 60 * 25),
+				new PomodoroTask('1', 'Tarefa 1', PomodoroTask.TYPES.POMODORO, 1000 * 60 * 45),
 				new PomodoroTask('11', null, PomodoroTask.TYPES.SHORT_INTERVAL, 1000 * 60 * 5),
 				new PomodoroTask('2', 'Tarefa 2', PomodoroTask.TYPES.POMODORO, 1000 * 60 * 25),
 				new PomodoroTask('21', null, PomodoroTask.TYPES.SHORT_INTERVAL, 1000 * 60 * 5),
@@ -177,38 +177,6 @@ export default {
 
 	box-shadow: 0 8px 15px -3px rgba(0,0,0,0.4);
 }
-.v-home-page > .-tomato-container > .-tomato > .-content{
-	display: grid;
-	grid-template-rows: minmax(auto, 100%) minmax(auto, 100%) 1fr minmax(auto, 100%);
-	grid-template-columns: 1fr;
-	grid-template-areas:
-		'current'
-		'timer'
-		'next'
-		'create';
-
-	width: 100%;
-	height: 100%;
-	max-width: 100%;
-	max-height: 100%;
-
-	border-radius: 20px;
-
-	overflow: hidden;
-}
-.v-home-page > .-tomato-container > .-tomato > .-content > .-current{
-	grid-area: current;
-}
-.v-home-page > .-tomato-container > .-tomato > .-content > .-timer{
-	grid-area: timer;
-}
-.v-home-page > .-tomato-container > .-tomato > .-content > .-next{
-	grid-area: next;
-}
-.v-home-page > .-tomato-container > .-tomato > .-content > .-create-new-box{
-	grid-area: create;
-}
-
 .v-home-page > .-tomato-container > .-tomato::after{
 	content: '';
 	pointer-events: none;
@@ -224,6 +192,53 @@ export default {
 
 
 
+.v-home-page > .-tomato-container > .-tomato > .-content{
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	/*display: grid;*/
+	/*grid-template-rows: auto auto minmax(0, 1fr) auto;*/
+	/*grid-template-areas:*/
+	/*	'current'*/
+	/*	'timer'*/
+	/*	'next';*/
+	/*	!*'create';*!*/
+
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+
+	border-radius: 20px;
+
+	overflow: hidden;
+}
+.v-home-page > .-tomato-container > .-tomato > .-content > .-current{
+	/*grid-area: current;*/
+	flex-shrink: 0;
+	flex-grow: 0;
+}
+.v-home-page > .-tomato-container > .-tomato > .-content > .-timer{
+	/*grid-area: timer;*/
+	flex-shrink: 0;
+	flex-grow: 0;
+}
+.v-home-page > .-tomato-container > .-tomato > .-content > .-next{
+	/*grid-area: next;*/
+	flex-shrink: 2;
+	flex-grow: 1;
+
+}
+.v-home-page > .-tomato-container > .-tomato > .-content > .-create-new-box{
+	/*grid-area: create;*/
+	flex-shrink: 0;
+	flex-grow: 0;
+}
+
+
+
+
+
 /**
  * Current task
  */
@@ -231,6 +246,7 @@ export default {
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+	max-width: 40%;
 }
 .v-home-page > .-tomato-container > .-tomato > .-content > .-current > .-task{
 	width: 100%;
@@ -242,17 +258,21 @@ export default {
  * Next tasks
  */
 .v-home-page > .-tomato-container > .-tomato > .-content > .-next{
+	flex-shrink: 1;
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
+	/*overflow-y: auto;*/
 }
 
 .v-home-page > .-tomato-container > .-tomato > .-content > .-next > .-tasks{
+	flex-shrink: 1;
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
+	/*align-items: stretch;*/
 
 	overflow-y: auto;
+	/*max-width: 40%;*/
 }
 .v-home-page > .-tomato-container > .-tomato > .-content > .-next > .-tasks > .-task{
 	width: 100%;
@@ -264,6 +284,7 @@ export default {
  * Create new task
  */
 .v-home-page > .-tomato-container > .-tomato > .-content > .-create-new-box{
+	height: 8rem;
 	background-color: var(--m-grey-500);
 	box-shadow: 0 -16px 10px -7px rgba(0,0,0,0.13);
 }

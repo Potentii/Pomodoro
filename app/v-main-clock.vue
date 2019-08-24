@@ -7,7 +7,7 @@
 
 		<div class="-line"></div>
 
-		<div class="-clock" ref="clock" :style="{ '--v-main-clock-timer-duration': (duration_min * 0.5) + 's', '--v-main-clock-width': clock_width + 'px' }">
+		<div class="-clock" ref="clock" :style="{ '--v-main-clock-animation-translate': -(duration_min * minute_width) + 'px', '--v-main-clock-animation-duration': (duration_min * 0.3) + 's' }">
 
 			<div class="-fade --left"></div>
 
@@ -48,7 +48,7 @@ export default {
 
 	data(){
 		return {
-			clock_width: 0
+			minute_width: 3/* minute marker */ + 8 /* minute spacing */
 		};
 	},
 
@@ -84,9 +84,9 @@ export default {
 .v-main-clock{
 	display: flex;
 	flex-direction: column;
-	align-items: stretch;
-	width: 100%;
-	max-width: 100%;
+	/*align-items: stretch;*/
+	/*width: 100%;*/
+	/*max-width: 100%;*/
 }
 .v-main-clock > *{
 	max-width: 100%;
@@ -114,6 +114,7 @@ export default {
 	height: 2.3em;
 	width: 100%;
 	max-width: 100%;
+	min-width: 100%;
 }
 
 .v-main-clock > .-clock > .-fade{
@@ -142,9 +143,10 @@ export default {
 	align-items: center;
 	padding-top: 0.5em;
 	padding-left: 50%;
+	/*left: 50%;*/
 
 	animation-name: v-main-clock-timer-animation;
-	animation-duration: var(--v-main-clock-timer-duration);
+	animation-duration: var(--v-main-clock-animation-duration);
 	animation-iteration-count: 1;
 	animation-fill-mode: forwards;
 	animation-timing-function: linear;
@@ -153,7 +155,8 @@ export default {
 
 @keyframes v-main-clock-timer-animation {
 	to{
-		transform: translateX(calc(-100% + calc(var(--v-main-clock-width) / 2)));
+		/*transform: translateX(calc(-100% + calc(var(--v-main-clock-width) / 2)));*/
+		transform: translateX(var(--v-main-clock-animation-translate));
 	}
 }
 
