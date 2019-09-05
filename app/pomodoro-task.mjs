@@ -14,7 +14,7 @@ export default class PomodoroTask{
 	/**
 	 *
 	 * @param {String} _id
-	 * @param {String} name
+	 * @param {String} name The pomodoro title
 	 * @param {String} type
 	 * @param {Number} duration_ms
 	 */

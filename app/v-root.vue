@@ -65,7 +65,7 @@ export default {
     * Theme colors
     */
    /* Blank */
-   --blank-bg--base: var(--m-grey-50);
+   --blank-bg--base: var(--m-grey-900);
    --blank-bg--1: var(--m-grey-700);
    --blank-bg--2: var(--m-grey-800);
    --blank-fg--base: var(--m-grey-50);

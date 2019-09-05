@@ -142,7 +142,7 @@ export default {
 	flex-direction: row;
 	align-items: center;
 	padding-top: 0.5em;
-	padding-left: 50%;
+	padding-left: calc(50% - 2px);
 	/*left: 50%;*/
 
 	animation-name: v-main-clock-timer-animation;
