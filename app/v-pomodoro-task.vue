@@ -1,6 +1,6 @@
 <template>
 	<v-pomodoro-list-item class="v-pomodoro-task">
-		<span class="-name">{{ task.name ? task.name : (task.type.includes('INTERVAL') ? 'Interval' : null) }}</span>
+		<span class="-name">{{ task.title ? task.title : (task.type.includes('INTERVAL') ? 'Interval' : null) }}</span>
 	</v-pomodoro-list-item>
 </template>
 
@@ -8,7 +8,7 @@
 
 <script>
 import VPomodoroListItem from './@components/v-pomodoro-list-item';
-import PomodoroTask      from './pomodoro-task';
+import Task              from './board/task/task';
 
 
 
@@ -21,10 +21,10 @@ export default {
 
 	props: {
 		/**
-		 * @type {PomodoroTask}
+		 * @type {Task}
 		 */
 		'task': {
-   		type: PomodoroTask,
+   		type: Task,
 			required: true
 		}
 	}

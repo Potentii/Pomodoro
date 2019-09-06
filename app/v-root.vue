@@ -151,7 +151,7 @@ export default {
 	background-color: rgba(0,0,0,0.2);
 }
 .v-root .--thin-scroll::-webkit-scrollbar{
-	width: 5px;
+	width: 6px;
 	/*background-color: var(--m-grey-100);*/
 }
 .v-root .--thin-scroll::-webkit-scrollbar-thumb{

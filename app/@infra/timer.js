@@ -11,7 +11,7 @@ const TIMER_STATES = Object.freeze({
 export default class Timer{
 
 	/**
-	 *
+	 * @deprecated
 	 * @private
 	 * @param {String} timerId
 	 * @param {String} name
@@ -19,10 +19,20 @@ export default class Timer{
 	 * @param {String} [state]
 	 */
 	constructor(timerId, name, ms = 0, state = TIMER_STATES.STARTED){
+		this.timerId = timerId;
 		this.name = name;
 		this.ms = ms;
-		this.timerId = timerId;
 		this.state = state;
+	}
+
+
+	static from(obj){
+		return new Timer(
+			obj.timerId,
+			obj.name,
+			obj.ms,
+			obj.state,
+		);
 	}
 
 

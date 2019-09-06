@@ -5,10 +5,10 @@
 
 			<div class="-tomato">
 
-            <div class="-start-card --big-card">
+            <div class="-start-card --big-card" v-if="!current_task && not_started_tasks && not_started_tasks.length">
 
                <!-- * Pomodoro starter * -->
-               <div class="-starter" v-if="!pomodoro && tasks">
+               <div class="-starter">
 
                   <span class="-text"><i>Start</i> this pomodoro</span>
 
@@ -22,13 +22,13 @@
             </div>
 
 
-            <div class="-main-card --big-card" v-if="true">
+            <div class="-main-card --big-card">
 
                <!-- * Current pomodoro * -->
                <div class="-current">
-                  <template v-if="pomodoro">
+                  <template v-if="current_task">
                      <span class="-title --section-title"><span class="-text">Current</span></span>
-                     <v-pomodoro-task class="-task" :task="pomodoro"></v-pomodoro-task>
+                     <v-pomodoro-task class="-task" :task="current_task"></v-pomodoro-task>
                   </template>
                   <template v-else>
                      <!-- TODO show empty state, maybe a tutorial? -->
@@ -37,24 +37,24 @@
 
 
                <!-- * Timer * -->
-               <v-main-clock class="-timer" :duration="pomodoro ? pomodoro.duration_ms : null"></v-main-clock>
+               <v-main-clock class="-timer" ref="clock" v-show="current_task" :offset="current_task ? current_task.elapsed_time : 0" :duration="current_task ? current_task.duration : null"></v-main-clock>
 
 
                <!-- * Next pomodoros * -->
                <div class="-next">
                   <span class="-title --section-title"><span class="-text">Next tasks</span></span>
                   <ul class="-tasks --thin-scroll">
-                     <v-pomodoro-task class="-task" :key="task._id" :task="task" v-for="task in tasks"></v-pomodoro-task>
+                     <v-pomodoro-task class="-task" :key="task._id" :task="task" v-for="task in not_started_tasks"></v-pomodoro-task>
                   </ul>
                </div>
 
             </div>
 
 
-            <div class="-create-task-card --big-card" v-if="true">
+            <div class="-create-task-card --big-card" v-if="false">
 
                <!-- * Create new pomodoro * -->
-               <div class="-create-new-box" v-if="true">d
+               <div class="-create-new-box">
                </div>
 
             </div>
@@ -69,9 +69,10 @@
 
 
 <script>
-import VPomodoroTask from './v-pomodoro-task';
-import PomodoroTask  from './pomodoro-task';
-import VMainClock    from './v-main-clock';
+import VPomodoroTask  from './v-pomodoro-task';
+import VMainClock     from './v-main-clock';
+import Board          from './board/board';
+import Task           from './board/task/task';
 
 
 
@@ -85,82 +86,118 @@ export default {
 
 	data(){
 		return {
+         /**
+          * @type {Board}
+          */
+         board: null,
 
-			finished: [],
-
-			pomodoro: null,
-
-			tasks: [
-				new PomodoroTask('1', 'Tarefa 1', PomodoroTask.TYPES.POMODORO, 1000 * 60 * 45),
-				new PomodoroTask('11', null, PomodoroTask.TYPES.SHORT_INTERVAL, 1000 * 60 * 5),
-				new PomodoroTask('2', 'Tarefa 2', PomodoroTask.TYPES.POMODORO, 1000 * 60 * 25),
-				new PomodoroTask('21', null, PomodoroTask.TYPES.SHORT_INTERVAL, 1000 * 60 * 5),
-				new PomodoroTask('3', 'Tarefa 3', PomodoroTask.TYPES.POMODORO, 1000 * 60 * 25),
-				new PomodoroTask('31', null, PomodoroTask.TYPES.SHORT_INTERVAL, 1000 * 60 * 5),
-				new PomodoroTask('4', 'Tarefa 4', PomodoroTask.TYPES.POMODORO, 1000 * 60 * 25),
-				new PomodoroTask('41', null, PomodoroTask.TYPES.LONG_INTERVAL, 1000 * 60 * 30),
-			],
+			/**
+          * @type {Task[]}
+			 */
+			tasks: [],
 
 		};
 	},
 
 
-	mounted(){
-		// this.advanceToNextTask();
+   computed: {
+
+		/**
+       * @type {Task[]}
+       */
+		not_started_tasks(){
+			return this.tasks.filter(t => !t.hasStarted());
+      },
+
+		/**
+       *
+		 * @type {Task}
+		 */
+		current_task(){
+			return this.tasks.find(t => t.isRunning());
+      }
+
+   },
+
+
+	async mounted(){
+		await this.load();
 	},
 
 
 	methods: {
 
-		startPomodoro_onClick(){
-			this.advanceToNextTask();
+		async load(){
+			await this.loadBoard();
+      },
+
+		async loadBoard(_board){
+			this.board = new Board('b1', 'My new board');
+
+			this.tasks = [
+				new Task('t1', 'b1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
+				new Task('t1i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+				new Task('t2', 'b1', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
+				new Task('t2i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+				new Task('t3', 'b1', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
+				new Task('t3i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+				new Task('t4', 'b1', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
+				new Task('ti', 'b1', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
+         ]
+      },
+
+
+		async startPomodoro_onClick(){
+			await this.advanceToNextTask();
+         this.$refs.clock.start();
 		},
 
 
-		advanceToNextTask(){
-			const next = this.getFirstPomodoroTask();
-			const last = this.getCurrentPomodoroTask();
-			this.removeFirstPomodoroTask();
-			if(last)
-				this.addTaskToFinished(last);
-			this.setCurrentPomodoroTask(next);
+		async advanceToNextTask(){
+			const curr = this.current_task;
+			if(curr)
+            curr.setAsFinishedNow();
+
+			const next = this.not_started_tasks[0];
+			if(next)
+				next.setAsStartedNow();
 		},
 
-		addTaskToFinished(pomodoro_task){
-			this.finished.push(pomodoro_task);
-		},
-
-		getCurrentPomodoroTask(){
-			return this.pomodoro;
-		},
-
-		setCurrentPomodoroTask(pomodoro_task){
-			this.pomodoro = pomodoro_task;
-		},
-
-		removeFirstPomodoroTask(){
-			if(!this.tasks || !this.tasks.length)
-				return;
-			this.tasks.splice(0, 1);
-		},
-
-		removeLastPomodoroTask(){
-			if(!this.tasks || !this.tasks.length)
-				return;
-			this.tasks.splice(this.tasks.length-1, 1);
-		},
-
-		getFirstPomodoroTask(){
-			if(!this.tasks || !this.tasks.length)
-				return null;
-			return this.tasks[0];
-		},
-
-		getLastPomodoroTask(){
-			if(!this.tasks || !this.tasks.length)
-				return null;
-			return this.tasks[this.tasks.length-1];
-		},
+		// addTaskToFinished(pomodoro_task){
+		// 	this.finished.push(pomodoro_task);
+		// },
+      //
+		// getCurrentPomodoroTask(){
+		// 	return this.pomodoro;
+		// },
+      //
+		// setCurrentPomodoroTask(pomodoro_task){
+		// 	this.pomodoro = pomodoro_task;
+		// },
+      //
+		// removeFirstPomodoroTask(){
+		// 	if(!this.tasks || !this.tasks.length)
+		// 		return;
+		// 	this.tasks.splice(0, 1);
+		// },
+      //
+		// removeLastPomodoroTask(){
+		// 	if(!this.tasks || !this.tasks.length)
+		// 		return;
+		// 	this.tasks.splice(this.tasks.length-1, 1);
+		// },
+      //
+		// getFirstPomodoroTask(){
+		// 	if(!this.tasks || !this.tasks.length)
+		// 		return null;
+		// 	return this.tasks[0];
+		// },
+      //
+		// getLastPomodoroTask(){
+		// 	if(!this.tasks || !this.tasks.length)
+		// 		return null;
+		// 	return this.tasks[this.tasks.length-1];
+		// },
 
 	},
 
@@ -179,14 +216,15 @@ export default {
 }
 
 .v-home-page .--section-title{
-	opacity: 0.8;
-	/*color: var(--m-grey-200);*/
+	opacity: 0.9;
 	margin: 1em 1.5em 0.3em 1.5em;
 }
 .v-home-page .--section-title > .-text{
 	font-family: 'Roboto Medium', sans-serif;
 	letter-spacing: 0.09em;
 	font-size: 12px;
+   color: var(--m-grey-50);
+   text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 }
 
 .v-home-page > .-tomato-container{
@@ -281,11 +319,11 @@ export default {
    flex-direction: column;
    align-items: stretch;
 
-   padding: 2.2em 1em;
+   padding: 1.6em 1em 1.8em 1em;
 }
 .v-home-page > .-tomato-container > .-tomato > .-start-card > .-starter > .-text{
-   font-size: 1em;
-   margin-bottom: 1.2em;
+   font-size: 17px;
+   margin-bottom: 0.9em;
    text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 }
 .v-home-page > .-tomato-container > .-tomato > .-start-card > .-starter > .-play{
@@ -293,10 +331,18 @@ export default {
    align-items: center;
    justify-content: center;
 
-   padding: 0.4em 2.8em;
+   padding: 0.3em 2em;
 
    border: 1px var(--m-grey-50) solid;
    border-radius: 3em;
+
+   transition: background-color 0.2s ease;
+}
+.v-home-page > .-tomato-container > .-tomato > .-start-card > .-starter > .-play:hover{
+   background-color: rgba(255,255,255,0.2);
+}
+.v-home-page > .-tomato-container > .-tomato > .-start-card > .-starter > .-play:active{
+   background-color: rgba(255,255,255,0.4);
 }
 .v-home-page > .-tomato-container > .-tomato > .-start-card > .-starter > .-play > .-icon{
    font-size: 2em;

@@ -6,8 +6,17 @@
 		</div>
 
 		<div class="-line"></div>
-
-		<div class="-clock" ref="clock" :style="{ '--v-main-clock-animation-translate': -(duration_min * minute_width) + 'px', '--v-main-clock-animation-duration': (duration_min * 0.3) + 's' }">
+		<div class="-clock"
+			  ref="clock"
+			  :class="{
+			  '--ticking': ticking,
+			  '--live': live,
+			  }"
+			  :style="{
+			  '--v-main-clock-animation-translate': -(duration_min * minute_width) + 'px',
+			  '--v-main-clock-animation-offset' : !duration || !offset ? '0px' : -(offset / duration) * duration_min * minute_width + 'px',
+			  '--v-main-clock-animation-duration': ((duration - offset) / 1000) / 60 + 's'
+			  }">
 
 			<div class="-fade --left"></div>
 
@@ -42,13 +51,21 @@ export default {
 			type: Number,
 			required: false,
 			default: 0
+		},
+
+		'offset': {
+			type: Number,
+			required: false,
+			default: 0
 		}
 	},
 
 
 	data(){
 		return {
-			minute_width: 3/* minute marker */ + 8 /* minute spacing */
+			ticking: false,
+			live: false,
+			minute_width: 3 /* minute marker */ + 8 /* minute spacing */
 		};
 	},
 
@@ -59,8 +76,26 @@ export default {
 			if(!this.duration)
 				return 0;
 			return this.duration / (1000 * 60);
+		},
+
+		offset_min(){
+			if(!this.offset)
+				return 0;
+			return this.offset / (1000 * 60);
 		}
 
+	},
+
+
+	watch: {
+		// offset(v){
+		// 	this.initial = v;
+		// }
+	},
+
+
+	beforeMount(){
+		this.stop();
 	},
 
 
@@ -72,7 +107,19 @@ export default {
 
 	methods: {
 
+		start(){
+			this.ticking = true;
+			this.live = true;
+		},
 
+		pause(){
+			this.ticking = false;
+		},
+
+		stop(){
+			this.live = false;
+			this.ticking = false;
+		}
 
 	},
 }
@@ -145,12 +192,26 @@ export default {
 	padding-left: calc(50% - 2px);
 	/*left: 50%;*/
 
-	animation-name: v-main-clock-timer-animation;
+	/*animation-name: v-main-clock-timer-animation;*/
 	animation-duration: var(--v-main-clock-animation-duration);
 	animation-iteration-count: 1;
 	animation-fill-mode: forwards;
 	animation-timing-function: linear;
-	transform: translateX(0);
+	transform: translateX(var(--v-main-clock-animation-offset));
+}
+
+.v-main-clock > .-clock.--ticking > .-minutes{
+	animation-play-state: running;
+}
+.v-main-clock > .-clock:not(.--ticking) > .-minutes{
+	animation-play-state: paused;
+}
+
+.v-main-clock > .-clock.--live > .-minutes{
+	animation-name: v-main-clock-timer-animation;
+}
+.v-main-clock > .-clock:not(.--live) > .-minutes{
+	animation-name: unset;
 }
 
 @keyframes v-main-clock-timer-animation {
@@ -159,6 +220,7 @@ export default {
 		transform: translateX(var(--v-main-clock-animation-translate));
 	}
 }
+
 
 .v-main-clock > .-clock > .-minutes > .-minute{
 	flex-shrink: 0;
