@@ -29,6 +29,11 @@ export default class Task{
 	}
 
 
+	/**
+	 *
+	 * @param {*|Task} obj
+	 * @returns {Task}
+	 */
 	static from(obj){
 		return new Task(
 			obj._id,
@@ -38,6 +43,11 @@ export default class Task{
 			obj.type,
 			obj.execution ? TaskExecution.from(obj.execution) : null,
 		);
+	}
+
+
+	get id(){
+		return this._id;
 	}
 
 

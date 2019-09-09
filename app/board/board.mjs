@@ -6,11 +6,21 @@ export default class Board{
 	}
 
 
+	/**
+	 *
+	 * @param {*|Board} obj
+	 * @returns {Board}
+	 */
 	static from(obj){
 		return new Board(
 			obj._id,
 			obj.name,
 		);
+	}
+
+
+	get id(){
+		return this._id;
 	}
 
 }

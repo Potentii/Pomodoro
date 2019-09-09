@@ -3,6 +3,8 @@
 
 		<div class="-tomato-container">
 
+         <span class="-title" v-if="current_board">{{ current_board.name }}</span>
+
 			<div class="-tomato">
 
             <div class="-start-card --big-card" v-if="!current_task && not_started_tasks && not_started_tasks.length">
@@ -25,14 +27,9 @@
             <div class="-main-card --big-card">
 
                <!-- * Current pomodoro * -->
-               <div class="-current">
-                  <template v-if="current_task">
-                     <span class="-title --section-title"><span class="-text">Current</span></span>
-                     <v-pomodoro-task class="-task" :task="current_task"></v-pomodoro-task>
-                  </template>
-                  <template v-else>
-                     <!-- TODO show empty state, maybe a tutorial? -->
-                  </template>
+               <div class="-current" v-if="current_task">
+                  <span class="-title --section-title"><span class="-text">Current</span></span>
+                  <v-pomodoro-task class="-task" :task="current_task"></v-pomodoro-task>
                </div>
 
 
@@ -69,10 +66,11 @@
 
 
 <script>
-import VPomodoroTask  from './v-pomodoro-task';
-import VMainClock     from './v-main-clock';
-import Board          from './board/board';
-import Task           from './board/task/task';
+import VPomodoroTask            from './v-pomodoro-task';
+import VMainClock               from './v-main-clock';
+import Board                    from './board/board';
+import Task                     from './board/task/task';
+import { mapActions, mapState } from 'vuex';
 
 
 
@@ -91,16 +89,19 @@ export default {
           */
          board: null,
 
-			/**
-          * @type {Task[]}
-			 */
-			tasks: [],
+			// /**
+         //  * @type {Task[]}
+			//  */
+			// tasks: [],
 
 		};
 	},
 
 
    computed: {
+		...mapState('board', [ 'boards', 'current_board' ]),
+		...mapState('board/task', [ 'tasks' ]),
+
 
 		/**
        * @type {Task[]}
@@ -109,41 +110,70 @@ export default {
 			return this.tasks.filter(t => !t.hasStarted());
       },
 
+
 		/**
        *
 		 * @type {Task}
 		 */
 		current_task(){
-			return this.tasks.find(t => t.isRunning());
+			return this.tasks.find(t => t.isRunning() || t.isPaused());
       }
 
    },
 
 
 	async mounted(){
+		// const board = new Board('b1', 'My new board');
+      //
+		// const tasks = [
+		// 	new Task('t1', 'b1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t1i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+		// 	new Task('t2', 'b1', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t2i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+		// 	new Task('t3', 'b1', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t3i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+		// 	new Task('t4', 'b1', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('ti', 'b1', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
+		// ];
+      //
+		// await BoardRoot.updateCache([ board ]);
+		// await TaskRoot.updateCache(tasks);
+
 		await this.load();
 	},
 
 
 	methods: {
+		...mapActions('board', [ 'loadAllBoards' ]),
+		...mapActions('board/task', [ 'loadAllTasks', 'updateTasks', 'calculateTasksState' ]),
+
 
 		async load(){
-			await this.loadBoard();
+			await Promise.all([
+				this.loadAllBoards(),
+			   this.loadAllTasks()
+         ]);
+
+			// TODO update the boards states
+         this.calculateTasksState();
+
+			if(this.current_task && this.current_task.isRunning())
+				this.$refs.clock.start();
       },
 
 		async loadBoard(_board){
-			this.board = new Board('b1', 'My new board');
+			// this.board = new Board('b1', 'My new board');
 
-			this.tasks = [
-				new Task('t1', 'b1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
-				new Task('t1i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-				new Task('t2', 'b1', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
-				new Task('t2i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-				new Task('t3', 'b1', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
-				new Task('t3i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-				new Task('t4', 'b1', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
-				new Task('ti', 'b1', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
-         ]
+			// this.tasks = [
+			// 	new Task('t1', 'b1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
+			// 	new Task('t1i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+			// 	new Task('t2', 'b1', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
+			// 	new Task('t2i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+			// 	new Task('t3', 'b1', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
+			// 	new Task('t3i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+			// 	new Task('t4', 'b1', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
+			// 	new Task('ti', 'b1', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
+         // ]
       },
 
 
@@ -154,13 +184,22 @@ export default {
 
 
 		async advanceToNextTask(){
+			const tasks_to_update = [];
+
 			const curr = this.current_task;
-			if(curr)
-            curr.setAsFinishedNow();
+			if(curr){
+				curr.setAsFinishedNow();
+				tasks_to_update.push(curr);
+         }
 
 			const next = this.not_started_tasks[0];
-			if(next)
+			if(next){
 				next.setAsStartedNow();
+				tasks_to_update.push(next);
+         }
+
+			if(tasks_to_update.length)
+            await this.updateTasks(tasks_to_update);
 		},
 
 		// addTaskToFinished(pomodoro_task){
@@ -242,7 +281,7 @@ export default {
  * Tomato
  */
 .v-home-page > .-tomato-container > .-tomato{
-   --var-card-border-radius: 20px;
+   --var-card-border-radius: 23px;
 
    display: flex;
    flex-direction: column;
@@ -363,6 +402,8 @@ export default {
    display: flex;
    flex-direction: column;
    align-items: stretch;
+
+   padding-bottom: var(--var-card-border-radius);
 }
 .v-home-page > .-tomato-container > .-tomato > .-main-card > .-current{
    flex: 0 0 auto;
@@ -419,6 +460,8 @@ export default {
    display: flex;
    flex-direction: column;
    align-items: stretch;
+
+   padding-bottom: var(--var-card-border-radius);
 }
 
 .v-home-page > .-tomato-container > .-tomato > .-create-task-card > .-create-new-box{

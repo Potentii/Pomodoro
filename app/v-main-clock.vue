@@ -15,7 +15,7 @@
 			  :style="{
 			  '--v-main-clock-animation-translate': -(duration_min * minute_width) + 'px',
 			  '--v-main-clock-animation-offset' : !duration || !offset ? '0px' : -(offset / duration) * duration_min * minute_width + 'px',
-			  '--v-main-clock-animation-duration': ((duration - offset) / 1000) / 60 + 's'
+			  '--v-main-clock-animation-duration': ((duration - offset) / 1000) + 's'
 			  }">
 
 			<div class="-fade --left"></div>
