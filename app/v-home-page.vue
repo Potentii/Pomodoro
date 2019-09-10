@@ -1,13 +1,13 @@
 <template>
 	<div class="v-home-page">
 
-		<div class="-tomato-container">
+		<div class="-tomato-container" v-if="current_board">
 
          <span class="-title" v-if="current_board">{{ current_board.name }}</span>
 
 			<div class="-tomato">
 
-            <div class="-start-card --big-card" v-if="!current_task && not_started_tasks && not_started_tasks.length">
+            <div class="-start-card --big-card" v-if="current_board && current_board.not_started_tasks.length">
 
                <!-- * Pomodoro starter * -->
                <div class="-starter">
@@ -27,21 +27,21 @@
             <div class="-main-card --big-card">
 
                <!-- * Current pomodoro * -->
-               <div class="-current" v-if="current_task">
+               <div class="-current" v-if="current_board.current_task">
                   <span class="-title --section-title"><span class="-text">Current</span></span>
-                  <v-pomodoro-task class="-task" :task="current_task"></v-pomodoro-task>
+                  <v-pomodoro-task class="-task" :task="current_board.current_task"></v-pomodoro-task>
                </div>
 
 
                <!-- * Timer * -->
-               <v-main-clock class="-timer" ref="clock" v-show="current_task" :offset="current_task ? current_task.elapsed_time : 0" :duration="current_task ? current_task.duration : null"></v-main-clock>
+               <v-main-clock class="-timer" ref="clock" v-show="current_board.current_task" :offset="current_board.current_task ? current_board.current_task.elapsed_time : 0" :duration="current_board.current_task ? current_board.current_task.duration : null"></v-main-clock>
 
 
                <!-- * Next pomodoros * -->
                <div class="-next">
                   <span class="-title --section-title"><span class="-text">Next tasks</span></span>
                   <ul class="-tasks --thin-scroll">
-                     <v-pomodoro-task class="-task" :key="task._id" :task="task" v-for="task in not_started_tasks"></v-pomodoro-task>
+                     <v-pomodoro-task class="-task" :key="task._id" :task="task" v-for="task in current_board.not_started_tasks"></v-pomodoro-task>
                   </ul>
                </div>
 
@@ -68,9 +68,10 @@
 <script>
 import VPomodoroTask            from './v-pomodoro-task';
 import VMainClock               from './v-main-clock';
-import Board                    from './board/board';
-import Task                     from './board/task/task';
 import { mapActions, mapState } from 'vuex';
+import BoardRoot                from './board/board-root';
+import Task                     from './board/task/task';
+import Board                    from './board/board';
 
 
 
@@ -84,10 +85,11 @@ export default {
 
 	data(){
 		return {
-         /**
-          * @type {Board}
-          */
-         board: null,
+         // /**
+         //  * The current active board
+         //  * @type {Board}
+         //  */
+         // board: null,
 
 			// /**
          //  * @type {Task[]}
@@ -100,43 +102,47 @@ export default {
 
    computed: {
 		...mapState('board', [ 'boards', 'current_board' ]),
-		...mapState('board/task', [ 'tasks' ]),
+		// ...mapState('board/task', [ 'tasks' ]),
 
 
-		/**
-       * @type {Task[]}
-       */
-		not_started_tasks(){
-			return this.tasks.filter(t => !t.hasStarted());
-      },
+		// /**
+      //  * @type {Task[]}
+      //  */
+		// not_started_tasks(){
+		// 	return this.current_board.not_started_tasks;
+      // },
 
 
-		/**
-       *
-		 * @type {Task}
-		 */
-		current_task(){
-			return this.tasks.find(t => t.isRunning() || t.isPaused());
-      }
+		// /**
+      //  *
+		//  * @type {Task}
+		//  */
+		// current_task(){
+		// 	return this.current_board.current_task;
+		// 	// return this.tasks.find(t => t.isRunning() || t.isPaused());
+      // }
 
    },
 
 
 	async mounted(){
-		// const board = new Board('b1', 'My new board');
-      //
+
+
 		// const tasks = [
-		// 	new Task('t1', 'b1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
-		// 	new Task('t1i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-		// 	new Task('t2', 'b1', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
-		// 	new Task('t2i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-		// 	new Task('t3', 'b1', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
-		// 	new Task('t3i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-		// 	new Task('t4', 'b1', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
-		// 	new Task('ti', 'b1', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
+		// 	new Task('t1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t1i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+		// 	new Task('t2', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t2i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+		// 	new Task('t3', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t3i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
+		// 	new Task('t4', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('ti', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
 		// ];
       //
-		// await BoardRoot.updateCache([ board ]);
+		// const board = new Board('b1', 'My new board', tasks);
+      //
+		// await BoardRoot.updateBoardsOnCache([ board ]);
+		// await BoardRoot.setActiveBoardIdOnCache(board.id);
 		// await TaskRoot.updateCache(tasks);
 
 		await this.load();
@@ -144,20 +150,22 @@ export default {
 
 
 	methods: {
-		...mapActions('board', [ 'loadAllBoards' ]),
-		...mapActions('board/task', [ 'loadAllTasks', 'updateTasks', 'calculateTasksState' ]),
+		...mapActions('board', [ 'loadAllBoards', 'loadActiveBoard', 'setBoardAsActive' ]),
+		// ...mapActions('board/task', [ 'loadAllTasks', 'updateTasks', 'calculateTasksState' ]),
 
 
 		async load(){
-			await Promise.all([
-				this.loadAllBoards(),
-			   this.loadAllTasks()
-         ]);
+			await this.loadAllBoards();
+			await this.loadActiveBoard();
+
+			// TODO get the active one from the cache
+			// if(this.boards && this.boards.length)
+         //    await this.setBoardAsActive(this.boards[0]);
 
 			// TODO update the boards states
-         this.calculateTasksState();
+         // this.calculateTasksState();
 
-			if(this.current_task && this.current_task.isRunning())
+			if(this.current_board && this.current_board.current_task && this.current_board.current_task.isRunning())
 				this.$refs.clock.start();
       },
 
@@ -186,18 +194,19 @@ export default {
 		async advanceToNextTask(){
 			const tasks_to_update = [];
 
-			const curr = this.current_task;
+			const curr = this.current_board.current_task;
 			if(curr){
 				curr.setAsFinishedNow();
 				tasks_to_update.push(curr);
          }
 
-			const next = this.not_started_tasks[0];
+			const next = this.current_board.not_started_tasks[0];
 			if(next){
 				next.setAsStartedNow();
 				tasks_to_update.push(next);
          }
 
+			// TODO
 			if(tasks_to_update.length)
             await this.updateTasks(tasks_to_update);
 		},

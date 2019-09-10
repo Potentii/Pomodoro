@@ -9,6 +9,9 @@ const TYPES = Object.freeze({
 });
 
 
+/**
+ * @deprecated
+ */
 export default class PomodoroTask{
 
 	/**

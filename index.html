@@ -6,8 +6,6 @@
 <!--      <link rel="manifest" href="/manifest.webmanifest">-->
       <meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="theme-color" content="#424242">
-      <!-- icon for Safari -->
-<!--      <link rel="apple-touch-icon" href="app/@infra/icons/ios/ios-appicon-1024-1024.png">-->
 
       <!-- * Favicons * -->
       <!-- <link rel="icon" href="/static/resources/icons/favicon-32.png" sizes="32x32"> -->
@@ -24,6 +22,8 @@
 
 <!--      <link rel="stylesheet" href="app/@infra/style/animations.css">-->
 
+      <script src="sw/register.mjs" charset="utf-8" type="text/javascript"></script>
+
       <!-- * App's title * -->
       <title>Pomodoro</title>
    </head>
@@ -31,17 +31,4 @@
       <div id="app"></div>
       <script src="app/view.mjs" charset="utf-8" type="text/javascript"></script>
    </body>
-   <script>
-
-		// if ('serviceWorker' in navigator) {
-		// 	window.addEventListener('load', () => {
-		// 		navigator.serviceWorker.register('/service-worker.js')
-		// 			.then(function(reg){
-		// 				console.log("service-worker registered");
-		// 			}).catch(function(err){
-		// 			   console.log("service-worker didn't register. Error: ", err);
-		// 		   });
-		// 	});
-		// }
-   </script>
 </html>

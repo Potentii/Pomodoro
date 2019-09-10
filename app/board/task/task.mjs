@@ -13,15 +13,13 @@ export default class Task{
 	/**
 	 *
 	 * @param {String} _id
-	 * @param {String} _board
 	 * @param {String} title
 	 * @param {Number} duration
 	 * @param {String} [type]
 	 * @param {TaskExecution} [execution]
 	 */
-	constructor(_id, _board, title, duration, type = TYPES.POMODORO, execution = null){
+	constructor(_id, title, duration, type = TYPES.POMODORO, execution = null){
 		this._id = _id;
-		this._board = _board;
 		this.title = title;
 		this.duration = duration;
 		this.type = type;
@@ -37,7 +35,6 @@ export default class Task{
 	static from(obj){
 		return new Task(
 			obj._id,
-			obj._board,
 			obj.title,
 			obj.duration,
 			obj.type,

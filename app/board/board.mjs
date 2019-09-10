@@ -1,8 +1,19 @@
+import Task from './task/task';
+
+
+
 export default class Board{
 
-	constructor(_id, name){
+	/**
+	 *
+	 * @param {String} _id
+	 * @param {String} name
+	 * @param {Task[]} [tasks=[]]
+	 */
+	constructor(_id, name, tasks = []){
 		this._id = _id;
 		this.name = name;
+		this.tasks = tasks;
 	}
 
 
@@ -15,12 +26,22 @@ export default class Board{
 		return new Board(
 			obj._id,
 			obj.name,
+			obj.tasks?.map?.(Task.from)
 		);
 	}
 
 
 	get id(){
 		return this._id;
+	}
+
+
+	get current_task(){
+		return this.tasks.find(t => t.isRunning() || t.isPaused());
+	}
+
+	get not_started_tasks(){
+		return this.tasks.filter(t => !t.hasStarted());
 	}
 
 }
