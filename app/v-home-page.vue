@@ -7,7 +7,7 @@
 
 			<div class="-tomato">
 
-            <div class="-start-card --big-card" v-if="current_board && current_board.not_started_tasks.length">
+            <div class="-start-card --big-card" v-if="current_board && !current_board.current_task && current_board.not_started_tasks.length">
 
                <!-- * Pomodoro starter * -->
                <div class="-starter">
@@ -85,43 +85,12 @@ export default {
 
 	data(){
 		return {
-         // /**
-         //  * The current active board
-         //  * @type {Board}
-         //  */
-         // board: null,
-
-			// /**
-         //  * @type {Task[]}
-			//  */
-			// tasks: [],
-
 		};
 	},
 
 
    computed: {
 		...mapState('board', [ 'boards', 'current_board' ]),
-		// ...mapState('board/task', [ 'tasks' ]),
-
-
-		// /**
-      //  * @type {Task[]}
-      //  */
-		// not_started_tasks(){
-		// 	return this.current_board.not_started_tasks;
-      // },
-
-
-		// /**
-      //  *
-		//  * @type {Task}
-		//  */
-		// current_task(){
-		// 	return this.current_board.current_task;
-		// 	// return this.tasks.find(t => t.isRunning() || t.isPaused());
-      // }
-
    },
 
 
@@ -129,13 +98,13 @@ export default {
 
 
 		// const tasks = [
-		// 	new Task('t1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t1', 'Tarefa 1', 1000 * 60 * 0.1, Task.TYPES.POMODORO),
 		// 	new Task('t1i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-		// 	new Task('t2', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t2', 'Tarefa 2', 1000 * 60 * 5, Task.TYPES.POMODORO),
 		// 	new Task('t2i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-		// 	new Task('t3', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t3', 'Tarefa 3', 1000 * 60 * 5, Task.TYPES.POMODORO),
 		// 	new Task('t3i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-		// 	new Task('t4', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
+		// 	new Task('t4', 'Tarefa 4', 1000 * 60 * 5, Task.TYPES.POMODORO),
 		// 	new Task('ti', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
 		// ];
       //
@@ -143,14 +112,13 @@ export default {
       //
 		// await BoardRoot.updateBoardsOnCache([ board ]);
 		// await BoardRoot.setActiveBoardIdOnCache(board.id);
-		// await TaskRoot.updateCache(tasks);
 
 		await this.load();
 	},
 
 
 	methods: {
-		...mapActions('board', [ 'loadAllBoards', 'loadActiveBoard', 'setBoardAsActive' ]),
+		...mapActions('board', [ 'loadAllBoards', 'loadActiveBoard', 'updateBoard', 'setBoardAsActive' ]),
 		// ...mapActions('board/task', [ 'loadAllTasks', 'updateTasks', 'calculateTasksState' ]),
 
 
@@ -169,83 +137,49 @@ export default {
 				this.$refs.clock.start();
       },
 
-		async loadBoard(_board){
-			// this.board = new Board('b1', 'My new board');
-
-			// this.tasks = [
-			// 	new Task('t1', 'b1', 'Tarefa 1', 1000 * 60 * 25, Task.TYPES.POMODORO),
-			// 	new Task('t1i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-			// 	new Task('t2', 'b1', 'Tarefa 2', 1000 * 60 * 25, Task.TYPES.POMODORO),
-			// 	new Task('t2i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-			// 	new Task('t3', 'b1', 'Tarefa 3', 1000 * 60 * 25, Task.TYPES.POMODORO),
-			// 	new Task('t3i', 'b1', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-			// 	new Task('t4', 'b1', 'Tarefa 4', 1000 * 60 * 25, Task.TYPES.POMODORO),
-			// 	new Task('ti', 'b1', null, 1000 * 60 * 30, Task.TYPES.LONG_INTERVAL),
-         // ]
-      },
-
 
 		async startPomodoro_onClick(){
 			await this.advanceToNextTask();
-         this.$refs.clock.start();
-		},
+			await this.startCurrentTask();
+      },
+      
+      
+      async startCurrentTask(){
+			if(!this.current_board?.current_task)
+				throw new Error(`Cannot find current task to start`);
+
+			// TODO check if the task is already finished?
+
+			this.$refs.clock.start();
+
+			setTimeout(async () => {
+				await this.showNotification();
+				await this.advanceToNextTask();
+				await this.startCurrentTask();
+         }, this.current_board.current_task.remaining_time);
+      },
+      
+      
+      async showNotification(){
+			console.log('A fake notification');
+      },
 
 
 		async advanceToNextTask(){
-			const tasks_to_update = [];
+			if(!this.current_board)
+            throw new Error(`Cannot advance to next task: No active board`);
 
 			const curr = this.current_board.current_task;
-			if(curr){
+			if(curr)
 				curr.setAsFinishedNow();
-				tasks_to_update.push(curr);
-         }
+
 
 			const next = this.current_board.not_started_tasks[0];
-			if(next){
+			if(next)
 				next.setAsStartedNow();
-				tasks_to_update.push(next);
-         }
 
-			// TODO
-			if(tasks_to_update.length)
-            await this.updateTasks(tasks_to_update);
+         await this.updateBoard(this.current_board);
 		},
-
-		// addTaskToFinished(pomodoro_task){
-		// 	this.finished.push(pomodoro_task);
-		// },
-      //
-		// getCurrentPomodoroTask(){
-		// 	return this.pomodoro;
-		// },
-      //
-		// setCurrentPomodoroTask(pomodoro_task){
-		// 	this.pomodoro = pomodoro_task;
-		// },
-      //
-		// removeFirstPomodoroTask(){
-		// 	if(!this.tasks || !this.tasks.length)
-		// 		return;
-		// 	this.tasks.splice(0, 1);
-		// },
-      //
-		// removeLastPomodoroTask(){
-		// 	if(!this.tasks || !this.tasks.length)
-		// 		return;
-		// 	this.tasks.splice(this.tasks.length-1, 1);
-		// },
-      //
-		// getFirstPomodoroTask(){
-		// 	if(!this.tasks || !this.tasks.length)
-		// 		return null;
-		// 	return this.tasks[0];
-		// },
-      //
-		// getLastPomodoroTask(){
-		// 	if(!this.tasks || !this.tasks.length)
-		// 		return null;
-		// 	return this.tasks[this.tasks.length-1];
-		// },
 
 	},
 

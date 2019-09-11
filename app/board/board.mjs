@@ -31,15 +31,28 @@ export default class Board{
 	}
 
 
+	/**
+	 *
+	 * @returns {String}
+	 */
 	get id(){
 		return this._id;
 	}
 
 
+	/**
+	 *
+	 * @returns {Task}
+	 */
 	get current_task(){
 		return this.tasks.find(t => t.isRunning() || t.isPaused());
 	}
 
+
+	/**
+	 *
+	 * @returns {Task[]}
+	 */
 	get not_started_tasks(){
 		return this.tasks.filter(t => !t.hasStarted());
 	}

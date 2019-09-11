@@ -43,6 +43,12 @@ export default {
 		},
 
 
+		async updateBoard(context, board){
+			await BoardRoot.updateBoardOnCache(board);
+			await context.dispatch('loadAllBoards');
+		},
+
+
 		async loadActiveBoard(context){
 			const boards = context.state.boards;
 			const _board = await BoardRoot.getActiveBoardIdOnCache();

@@ -43,6 +43,10 @@ export default class Task{
 	}
 
 
+	/**
+	 *
+	 * @returns {String}
+	 */
 	get id(){
 		return this._id;
 	}
@@ -52,14 +56,29 @@ export default class Task{
 		return TYPES;
 	}
 
+
+	/**
+	 *
+	 * @returns {boolean}
+	 */
 	isPomodoroTask(){
 		return this.type === TYPES.POMODORO;
 	}
 
+
+	/**
+	 *
+	 * @returns {boolean}
+	 */
 	isLongInterval(){
 		return this.type === TYPES.LONG_INTERVAL;
 	}
 
+
+	/**
+	 *
+	 * @returns {boolean}
+	 */
 	isShortInterval(){
 		return this.type === TYPES.SHORT_INTERVAL;
 	}
@@ -89,23 +108,46 @@ export default class Task{
 	}
 
 
+	/**
+	 *
+	 * @returns {boolean}
+	 */
 	hasStarted(){
 		return !!this.execution?.started_ts;
 	}
 
+
+	/**
+	 *
+	 * @returns {boolean}
+	 */
 	isRunning(){
 		return !!this.execution?.started_ts && !this.isPaused() && !this.isDone();
 	}
 
+
+	/**
+	 *
+	 * @returns {boolean}
+	 */
 	isPaused(){
 		return !!this.execution?.paused_ts && !this.isDone();
 	}
 
+
+	/**
+	 *
+	 * @returns {boolean}
+	 */
 	isDone(){
 		return !!this.execution?.finished_ts;
 	}
 
 
+	/**
+	 *
+	 * @returns {Number}
+	 */
 	get elapsed_time(){
 		if(!this.hasStarted())
 			return 0;
@@ -119,6 +161,15 @@ export default class Task{
 		const since = Date.now();
 
 		return since - this.execution.started_ts;
+	}
+
+
+	/**
+	 *
+	 * @returns {Number}
+	 */
+	get remaining_time(){
+		return this.duration - this.elapsed_time;
 	}
 
 }
