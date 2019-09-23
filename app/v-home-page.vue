@@ -23,13 +23,17 @@
 
             </div>
 
-
             <div class="-main-card --big-card">
 
                <!-- * Current pomodoro * -->
                <div class="-current" v-if="current_board.current_task">
                   <span class="-title --section-title"><span class="-text">Current</span></span>
-                  <v-pomodoro-task class="-task" :task="current_board.current_task"></v-pomodoro-task>
+<!--                  <v-pomodoro-task class="-task" :task="current_board.current_task"></v-pomodoro-task>-->
+                  <div class="-pomodoro">
+                     <button class="-time-control -pause material-icons" v-if="current_board.current_task.isRunning()">pause</button>
+                     <button class="-time-control -play material-icons" v-else>play_arrow</button>
+                     <span class="-title">{{ current_board.current_task.title || (current_board.current_task.type.includes('INTERVAL') ? 'Interval' : null) }}</span>
+                  </div>
                </div>
 
 
@@ -98,7 +102,7 @@ export default {
 
 
 		// const tasks = [
-		// 	new Task('t1', 'Tarefa 1', 1000 * 60 * 0.1, Task.TYPES.POMODORO),
+		// 	new Task('t1', 'Tarefa 1', 1000 * 60 * 5, Task.TYPES.POMODORO),
 		// 	new Task('t1i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
 		// 	new Task('t2', 'Tarefa 2', 1000 * 60 * 5, Task.TYPES.POMODORO),
 		// 	new Task('t2i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
@@ -151,6 +155,8 @@ export default {
 			// TODO check if the task is already finished?
 
 			this.$refs.clock.start();
+
+			console.log(this.current_board.current_task.remaining_time);
 
 			setTimeout(async () => {
 				await this.showNotification();
@@ -367,9 +373,50 @@ export default {
    flex-direction: column;
    align-items: stretch;
 }
-.v-home-page > .-tomato-container > .-tomato > .-main-card > .-current > .-task{
+
+.v-home-page > .-tomato-container > .-tomato > .-main-card > .-current > .-pomodoro{
+   display: flex;
+   flex-direction: row;
+   align-items: center;
    width: 100%;
+
+   padding: 1em 1.5em;
 }
+
+.v-home-page > .-tomato-container > .-tomato > .-main-card > .-current > .-pomodoro > .-time-control{
+   --var-size: 1.7em;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+
+   width: var(--var-size);
+   height: var(--var-size);
+
+   margin-right: 1rem;
+
+   border: 3px solid var(--m-grey-200);
+
+   border-radius: 50%;
+
+   transition: background-color, transform, 0.15s ease;
+}
+.v-home-page > .-tomato-container > .-tomato > .-main-card > .-current > .-pomodoro > .-time-control:hover{
+   background-color: rgba(255,255,255,0.2);
+}
+.v-home-page > .-tomato-container > .-tomato > .-main-card > .-current > .-pomodoro > .-time-control:active{
+   transform: scale(0.98);
+}
+
+.v-home-page > .-tomato-container > .-tomato > .-main-card > .-current > .-pomodoro > .-title{
+   font-family: 'Roboto Medium', sans-serif;
+   font-size: 18px;
+   letter-spacing: 0.06em;
+
+   text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+}
+/*.v-home-page > .-tomato-container > .-tomato > .-main-card > .-current > .-task{*/
+/*   width: 100%;*/
+/*}*/
 
 
 /**

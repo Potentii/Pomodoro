@@ -19,7 +19,6 @@
 			  }">
 
 			<div class="-fade --left"></div>
-
 			<ul class="-minutes">
 				<li class="-minute"
 					 :key="minute"
