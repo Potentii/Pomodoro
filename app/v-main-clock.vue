@@ -13,19 +13,19 @@
 			  '--live': live,
 			  }"
 			  :style="{
-			  '--v-main-clock-animation-translate': -(duration_min * minute_width) + 'px',
-			  '--v-main-clock-animation-offset' : !duration || !offset ? '0px' : -(offset / duration) * duration_min * minute_width + 'px',
+			  '--v-main-clock-animation-translate': -(duration_5sec * minute_width) + 'px',
+			  '--v-main-clock-animation-offset' : !duration || !offset ? '0px' : -(offset / duration) * duration_5sec * minute_width + 'px',
 			  '--v-main-clock-animation-duration': ((duration - offset) / 1000) + 's'
 			  }">
 
 			<div class="-fade --left"></div>
 			<ul class="-minutes">
 				<li class="-minute"
-					 :key="minute"
-					 :class="{ '--bigger': minute % 5 == 0 || minute == 0 || minute == duration_min }"
-					 v-for="(_, minute) in duration_min + 1">
+					 :key="five_sec"
+					 :class="{ '--bigger': five_sec % (60/5) == 0 || five_sec == 0 || five_sec == duration_5sec }"
+					 v-for="(_, five_sec) in duration_5sec + 1">
 					<div class="-label-container">
-						<span class="-label" v-if="minute % 5 == 0 || minute == 0 || minute == duration_min">{{ minute }}</span>
+						<span class="-label" v-if="five_sec % (60/5) == 0 || five_sec == 0 || five_sec == duration_5sec">{{ five_sec / (60/5) }}</span>
 					</div>
 				</li>
 			</ul>
@@ -70,6 +70,19 @@ export default {
 
 
 	computed: {
+
+		duration_5sec(){
+			if(!this.duration)
+				return 0;
+			return this.duration / 5000;
+		},
+
+
+		duration_sec(){
+			if(!this.duration)
+				return 0;
+			return this.duration / 1000;
+		},
 
 		duration_min(){
 			if(!this.duration)

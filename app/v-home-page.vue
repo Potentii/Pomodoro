@@ -76,6 +76,7 @@ import { mapActions, mapState } from 'vuex';
 import BoardRoot                from './board/board-root';
 import Task                     from './board/task/task';
 import Board                    from './board/board';
+import LocalTimer               from '../@infra/timer/local-timer';
 
 
 
@@ -89,6 +90,7 @@ export default {
 
 	data(){
 		return {
+			current_local_timer: null
 		};
 	},
 
@@ -102,9 +104,9 @@ export default {
 
 
 		// const tasks = [
-		// 	new Task('t1', 'Tarefa 1', 1000 * 60 * 5, Task.TYPES.POMODORO),
-		// 	new Task('t1i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
-		// 	new Task('t2', 'Tarefa 2', 1000 * 60 * 5, Task.TYPES.POMODORO),
+		// 	new Task('t1', 'Tarefa 1', 1000 * 60 * 0.2, Task.TYPES.POMODORO),
+		// 	new Task('t1i', null, 1000 * 60 * 0.2, Task.TYPES.SHORT_INTERVAL),
+		// 	new Task('t2', 'Tarefa 2', 1000 * 60 * 0.2, Task.TYPES.POMODORO),
 		// 	new Task('t2i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
 		// 	new Task('t3', 'Tarefa 3', 1000 * 60 * 5, Task.TYPES.POMODORO),
 		// 	new Task('t3i', null, 1000 * 60 * 5, Task.TYPES.SHORT_INTERVAL),
@@ -154,15 +156,16 @@ export default {
 
 			// TODO check if the task is already finished?
 
+			this.$refs.clock.stop();
 			this.$refs.clock.start();
 
-			console.log(this.current_board.current_task.remaining_time);
-
-			setTimeout(async () => {
+			const task_remaining_time = this.current_board.current_task.remaining_time;
+         const local_timer = await LocalTimer.createNew(task_remaining_time);
+			await local_timer.start(async () => {
 				await this.showNotification();
 				await this.advanceToNextTask();
 				await this.startCurrentTask();
-         }, this.current_board.current_task.remaining_time);
+         });
       },
       
       

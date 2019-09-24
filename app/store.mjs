@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 
 // *Getting the stores from each context:
 import board_module from './board/store'
-import timer_module from './timer/store'
 
 
 
@@ -26,7 +25,6 @@ export default new Vuex.Store({
 
    modules: {
       'board': board_module,
-      'timer': timer_module,
    }
 
 });
